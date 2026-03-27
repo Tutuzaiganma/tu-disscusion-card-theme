@@ -1,0 +1,84 @@
+.tu-discussion-card-theme {
+  --tu-hero-title-inline-pad-ratio: 9%;
+
+  .DiscussionHero,
+  .Hero.TagHero {
+    border-radius: 12px;
+    margin: 12px auto;
+    padding: 18px 0;
+    background: var(--hero-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    width: calc(100% - 30px);
+    max-width: 100%;
+
+    .container {
+      width: 100%;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+  }
+
+  @media @phone {
+    .DiscussionHero,
+    .Hero.TagHero {
+      width: calc(100% - 6px);
+    }
+  }
+
+  @media @tablet {
+    .DiscussionHero,
+    .Hero.TagHero {
+      width: (@screen-tablet - 30px);
+    }
+  }
+
+  @media @desktop {
+    .DiscussionHero,
+    .Hero.TagHero {
+      width: (@screen-desktop - 30px);
+    }
+  }
+
+  @media @desktop-hd {
+    .DiscussionHero,
+    .Hero.TagHero {
+      width: (@screen-desktop-hd - 30px);
+    }
+  }
+
+  .DiscussionHero-items {
+    display: block;
+    width: 100%;
+  }
+
+  .DiscussionHero-title {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 700;
+    padding-inline: var(--tu-hero-title-inline-pad-ratio);
+  }
+
+  .Hero.TagHero {
+    .containerNarrow {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .Hero-title,
+    .Hero-subtitle {
+      text-align: center;
+      margin: 0;
+    }
+
+    .Hero-title {
+      font-weight: 700;
+      padding-inline: var(--tu-hero-title-inline-pad-ratio);
+    }
+  }
+}

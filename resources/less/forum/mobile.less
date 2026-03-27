@@ -1,5 +1,12 @@
 @media @phone {
   .tu-discussion-card-theme {
+    @mobile-action-layer: 3000;
+
+    // Keep action sheet above fixed players on phone.
+    .DiscussionList-discussions > li:has(.DiscussionListItem-controls.open) {
+      z-index: @mobile-action-layer;
+    }
+
     .Slidable-underneath {
       border-radius: 8px;
       background: var(--control-bg);
@@ -70,7 +77,7 @@
         right: 12px;
         left: auto;
         bottom: auto;
-        z-index: 1000;
+        z-index: 3;
         width: 34px;
         height: 34px;
         padding: 0;
@@ -96,9 +103,11 @@
       }
 
       .Dropdown-menu {
-        // On phone, Flarum renders this as a fixed bottom sheet.
-        // Keep only discussion-card action sheet above its own backdrop.
-        z-index: var(--zindex-modal) !important;
+        z-index: (@mobile-action-layer + 2) !important;
+      }
+
+      &.open {
+        z-index: (@mobile-action-layer + 3);
       }
     }
 

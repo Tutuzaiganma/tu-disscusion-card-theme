@@ -2,6 +2,8 @@
   .tu-discussion-card-theme {
     .Slidable-underneath {
       border-radius: 8px;
+      background: var(--control-bg);
+      pointer-events: auto;
     }
 
     .DiscussionListItem-content {
@@ -9,11 +11,19 @@
     }
 
     .Slidable .DiscussionListItem-content {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 8px;
+      background-clip: padding-box;
       transition: box-shadow 0.2s, border-radius 0.2s, background 0.2s;
 
       .sliding& {
-        background: var(--body-bg);
+        background: transparent;
         border-radius: 8px;
+        overflow: hidden;
+        mask-image: radial-gradient(white, black);
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
         box-shadow: 0 10px 30px fade(#0f172a, 8%);
       }
     }
@@ -24,24 +34,72 @@
 
     .DiscussionListItem-content {
       min-height: 88px;
-      padding: 16px 98px 16px 124px;
+      padding: 16px 16px 16px 138px;
     }
 
     .DiscussionListItem-title {
       font-size: 16px;
+      margin-right: 0;
+      padding-right: 0;
     }
 
     .DiscussionListItem-info {
       font-size: 11px;
       gap: 5px 8px;
+      padding-right: 86px;
       white-space: normal;
       overflow: visible;
       text-overflow: clip;
     }
 
     .DiscussionListItem-controls {
-      top: 11px;
-      right: 11px;
+      position: static;
+      top: auto;
+      right: auto;
+      opacity: 1;
+
+      // Keep the top-right trigger hidden on mobile,
+      // but allow slidable.js to show it inline while swiping.
+      .Dropdown-toggle {
+        display: none;
+      }
+
+      .Dropdown-toggle.Slidable-underneath {
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        left: auto;
+        bottom: auto;
+        z-index: 3;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: 0;
+        border-radius: 10px;
+        background: transparent !important;
+        box-shadow: none;
+        color: var(--muted-color) !important;
+        text-align: center;
+        transform: translateY(-50%);
+
+        .Button-icon,
+        .Button-caret {
+          width: auto;
+          margin: 0;
+          transform: none !important;
+        }
+
+        .Button-caret,
+        .Button-label {
+          display: none;
+        }
+      }
+
+      .Dropdown-menu {
+        // On phone, Flarum renders this as a fixed bottom sheet.
+        // Keep only discussion-card action sheet above its own backdrop.
+        z-index: var(--zindex-modal) !important;
+      }
     }
 
     .DiscussionListItem-count {
@@ -73,8 +131,8 @@
     .DiscussionListItem-author {
       left: 16px;
       top: 16px;
-      width: 94px;
-      height: 60px;
+      width: 108px;
+      height: 68px;
 
       .Avatar,
       .Avatar img {
@@ -84,7 +142,7 @@
 
     .DiscussionListItem-badges {
       top: 12px;
-      left: 114px;
+      left: 128px;
       transform: translateX(-100%);
     }
   }

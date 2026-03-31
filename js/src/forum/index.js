@@ -26,6 +26,16 @@ function extractFirstImageUrlFromPost(post) {
   return firstImage ? firstImage.getAttribute('src') : null;
 }
 
+function getDiscussionCoverImageUrl(discussion) {
+  const serializedCover = discussion.attribute('tuCoverImageUrl');
+
+  if (serializedCover && typeof serializedCover === 'string') {
+    return serializedCover;
+  }
+
+  return extractFirstImageUrlFromPost(discussion.firstPost());
+}
+
 function markCoverImageLoaded(imageElement) {
   if (!imageElement) {
     return;
@@ -57,7 +67,7 @@ app.initializers.add('tu/disscusion-card-theme', () => {
   override(DiscussionListItem.prototype, 'authorAvatarView', function () {
     const discussion = this.attrs.discussion;
     const user = discussion.user();
-    const firstImageUrl = extractFirstImageUrlFromPost(discussion.firstPost());
+    const firstImageUrl = getDiscussionCoverImageUrl(discussion);
 
     let avatarChild = avatar(user || null, { title: '' });
 

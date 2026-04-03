@@ -21,9 +21,17 @@ function extractFirstImageUrlFromPost(post) {
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
-  const firstImage = doc.querySelector('img[src]');
+  const images = doc.querySelectorAll('img[src]');
 
-  return firstImage ? firstImage.getAttribute('src') : null;
+  for (const image of images) {
+    if (image.classList && image.classList.contains('emoji')) {
+      continue;
+    }
+
+    return image.getAttribute('src');
+  }
+
+  return null;
 }
 
 function getDiscussionCoverImageUrl(discussion) {

@@ -11,8 +11,16 @@ function tuDisscusionCardThemeExtractFirstImageUrl(string $content): ?string
         return null;
     }
 
-    if (preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $content, $matches)) {
-        return $matches[1];
+    if (preg_match_all('/<img\b[^>]*>/i', $content, $imageTags)) {
+        foreach ($imageTags[0] as $imageTag) {
+            if (preg_match('/\bclass=["\'][^"\']*\bemoji\b[^"\']*["\']/i', $imageTag)) {
+                continue;
+            }
+
+            if (preg_match('/\bsrc=["\']([^"\']+)["\']/i', $imageTag, $matches)) {
+                return $matches[1];
+            }
+        }
     }
 
     if (preg_match('/!\[[^\]]*]\((\S+?)(?:\s+"[^"]*")?\)/', $content, $matches)) {

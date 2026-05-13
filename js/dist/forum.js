@@ -182,33 +182,6 @@ function markCoverImageLoaded(imageElement) {
     loadingLayer.remove();
   }
 }
-function initializeImageLoadingState(wrapperElement) {
-  if (!wrapperElement) {
-    return;
-  }
-  var imageElement = wrapperElement.querySelector('img');
-  if (!imageElement) {
-    wrapperElement.classList.add('is-loaded');
-    var loadingLayer = wrapperElement.querySelector('.TuDiscussionCard-coverLoading');
-    if (loadingLayer) {
-      loadingLayer.remove();
-    }
-    return;
-  }
-  var handleImageReady = function handleImageReady() {
-    markCoverImageLoaded(imageElement);
-  };
-  if (imageElement.complete) {
-    handleImageReady();
-    return;
-  }
-  imageElement.addEventListener('load', handleImageReady, {
-    once: true
-  });
-  imageElement.addEventListener('error', handleImageReady, {
-    once: true
-  });
-}
 flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.initializers.add('tu/disscusion-card-theme', function () {
   document.body.classList.add('tu-discussion-card-theme');
   Object(flarum_common_extend__WEBPACK_IMPORTED_MODULE_1__["extend"])(flarum_forum_states_DiscussionListState__WEBPACK_IMPORTED_MODULE_8___default.a.prototype, 'requestParams', function (params) {
@@ -220,27 +193,33 @@ flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.initializers.add('tu/dis
     var discussion = this.attrs.discussion;
     var user = discussion.user();
     var firstImageUrl = getDiscussionCoverImageUrl(discussion);
-    var avatarContent = flarum_common_helpers_avatar__WEBPACK_IMPORTED_MODULE_2___default()(user || null, {
+    var avatarChild = flarum_common_helpers_avatar__WEBPACK_IMPORTED_MODULE_2___default()(user || null, {
       title: ''
     });
     if (firstImageUrl) {
-      avatarContent = m("img", {
+      var handleImageReady = function handleImageReady(event) {
+        markCoverImageLoaded(event.currentTarget);
+      };
+      avatarChild = m("span", {
+        className: "TuDiscussionCard-coverImage"
+      }, m("span", {
+        className: "TuDiscussionCard-coverLoading",
+        "aria-hidden": "true"
+      }, m(flarum_common_components_LoadingIndicator__WEBPACK_IMPORTED_MODULE_5___default.a, {
+        size: "small"
+      })), m("img", {
         src: firstImageUrl,
         alt: "",
-        loading: "lazy"
-      });
+        loading: "lazy",
+        oncreate: function oncreate(vnode) {
+          if (vnode.dom.complete) {
+            markCoverImageLoaded(vnode.dom);
+          }
+        },
+        onload: handleImageReady,
+        onerror: handleImageReady
+      }));
     }
-    var avatarChild = m("span", {
-      className: "TuDiscussionCard-coverImage",
-      oncreate: function oncreate(vnode) {
-        initializeImageLoadingState(vnode.dom);
-      }
-    }, m("span", {
-      className: "TuDiscussionCard-coverLoading",
-      "aria-hidden": "true"
-    }, m(flarum_common_components_LoadingIndicator__WEBPACK_IMPORTED_MODULE_5___default.a, {
-      size: "small"
-    })), avatarContent);
     return m(flarum_common_components_Tooltip__WEBPACK_IMPORTED_MODULE_4___default.a, {
       text: flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.translator.trans('core.forum.discussion_list.started_text', {
         user: user,

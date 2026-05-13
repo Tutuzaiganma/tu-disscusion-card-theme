@@ -63,6 +63,37 @@ function markCoverImageLoaded(imageElement) {
   }
 }
 
+function initializeImageLoadingState(wrapperElement) {
+  if (!wrapperElement) {
+    return;
+  }
+
+  const imageElement = wrapperElement.querySelector('img');
+
+  if (!imageElement) {
+    wrapperElement.classList.add('is-loaded');
+
+    const loadingLayer = wrapperElement.querySelector('.TuDiscussionCard-coverLoading');
+    if (loadingLayer) {
+      loadingLayer.remove();
+    }
+
+    return;
+  }
+
+  const handleImageReady = () => {
+    markCoverImageLoaded(imageElement);
+  };
+
+  if (imageElement.complete) {
+    handleImageReady();
+    return;
+  }
+
+  imageElement.addEventListener('load', handleImageReady, { once: true });
+  imageElement.addEventListener('error', handleImageReady, { once: true });
+}
+
 app.initializers.add('tu/disscusion-card-theme', () => {
   document.body.classList.add('tu-discussion-card-theme');
 
@@ -77,33 +108,25 @@ app.initializers.add('tu/disscusion-card-theme', () => {
     const user = discussion.user();
     const firstImageUrl = getDiscussionCoverImageUrl(discussion);
 
-    let avatarChild = avatar(user || null, { title: '' });
+    let avatarContent = avatar(user || null, { title: '' });
 
     if (firstImageUrl) {
-      const handleImageReady = (event) => {
-        markCoverImageLoaded(event.currentTarget);
-      };
-
-      avatarChild = (
-        <span className="TuDiscussionCard-coverImage">
-          <span className="TuDiscussionCard-coverLoading" aria-hidden="true">
-            <LoadingIndicator size="small" />
-          </span>
-          <img
-            src={firstImageUrl}
-            alt=""
-            loading="lazy"
-            oncreate={(vnode) => {
-              if (vnode.dom.complete) {
-                markCoverImageLoaded(vnode.dom);
-              }
-            }}
-            onload={handleImageReady}
-            onerror={handleImageReady}
-          />
-        </span>
-      );
+      avatarContent = <img src={firstImageUrl} alt="" loading="lazy" />;
     }
+
+    const avatarChild = (
+      <span
+        className="TuDiscussionCard-coverImage"
+        oncreate={(vnode) => {
+          initializeImageLoadingState(vnode.dom);
+        }}
+      >
+        <span className="TuDiscussionCard-coverLoading" aria-hidden="true">
+          <LoadingIndicator size="small" />
+        </span>
+        {avatarContent}
+      </span>
+    );
 
     return (
       <Tooltip text={app.translator.trans('core.forum.discussion_list.started_text', { user, ago: humanTime(discussion.createdAt()) })} position="right">
